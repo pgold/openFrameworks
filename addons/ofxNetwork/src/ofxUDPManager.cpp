@@ -192,8 +192,9 @@ int	ofxUDPManager::Send(const char* pBuff,	const int iSize)
 {
 	if (m_hSocket == INVALID_SOCKET) return(SOCKET_ERROR);
 
-	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
+	if (m_dwTimeoutSend	!= NO_TIMEOUT)
 	{
+	#ifndef TARGET_WIN32
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
@@ -202,7 +203,10 @@ int	ofxUDPManager::Send(const char* pBuff,	const int iSize)
 		{
 			return(SOCKET_TIMEOUT);
 		}
-	}*/
+	#else
+		#warning MISSING WIN32 IMPLEMENTATION
+	#endif
+	}
 
 	int ret = sendto(m_hSocket, (char*)pBuff,	iSize, 0, (sockaddr *)&saClient, sizeof(sockaddr));
 	if(ret==-1) ofxNetworkCheckError();
@@ -265,17 +269,21 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 
 	}
 
-	/*if (m_dwTimeoutSend	!= NO_TIMEOUT)
+	if (m_dwTimeoutReceive != NO_TIMEOUT)
 	{
+	#ifndef TARGET_WIN32
 		fd_set fd;
 		FD_ZERO(&fd);
 		FD_SET(m_hSocket, &fd);
-		timeval	tv=	{m_dwTimeoutSend, 0};
+		timeval	tv=	{0, m_dwTimeoutSend};
 		if(select(m_hSocket+1,&fd,NULL,NULL,&tv)== 0)
 		{
 			return(SOCKET_TIMEOUT);
 		}
-	}*/
+	#else
+		#warning MISSING WIN32 IMPLEMENTATION
+	#endif
+	}
 
 	#ifndef TARGET_WIN32
 		socklen_t nLen= sizeof(sockaddr);
@@ -304,13 +312,13 @@ int	ofxUDPManager::Receive(char* pBuff, const int iSize)
 	//	return(recvfrom(m_hSocket, pBuff, iSize, 0));
 }
 
-void ofxUDPManager::SetTimeoutSend(int	timeoutInSeconds)
+void ofxUDPManager::SetTimeoutSend(int	timeoutInMSeconds)
 {
-	m_dwTimeoutSend= timeoutInSeconds;
+	m_dwTimeoutSend= timeoutInMSeconds;
 }
-void ofxUDPManager::SetTimeoutReceive(int timeoutInSeconds)
+void ofxUDPManager::SetTimeoutReceive(int timeoutInMSeconds)
 {
-	m_dwTimeoutReceive=	timeoutInSeconds;
+	m_dwTimeoutReceive=	timeoutInMSeconds;
 }
 int	ofxUDPManager::GetTimeoutSend()
 {

@@ -134,8 +134,8 @@ public:
 	//all data will be sent guaranteed.
 	int  SendAll(const char* pBuff, const int iSize);
 	int  Receive(char* pBuff, const int iSize);
-	void SetTimeoutSend(int timeoutInSeconds);
-	void SetTimeoutReceive(int timeoutInSeconds);
+	void SetTimeoutSend(int timeoutInMSeconds);
+	void SetTimeoutReceive(int timeoutInMSeconds);
 	int  GetTimeoutSend();
 	int  GetTimeoutReceive();
 	bool GetRemoteAddr(char* address);							//returns the IP of last received packet
